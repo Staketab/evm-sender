@@ -2,6 +2,7 @@ package internal
 
 import (
 	"github.com/spf13/cobra"
+	"sync"
 )
 
 func init() {
@@ -24,7 +25,17 @@ var startCommand = &cobra.Command{
 	Short: "Start EVM Sender",
 	Long:  "Start EVM Sender",
 	Run: func(cmd *cobra.Command, args []string) {
-		SendTx()
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			SendRangeTx()
+		}()
+		go func() {
+			defer wg.Done()
+			SendBackTx()
+		}()
+		wg.Wait()
 	},
 }
 
