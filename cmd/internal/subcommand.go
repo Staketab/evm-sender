@@ -21,8 +21,8 @@ var initCommand = &cobra.Command{
 
 var startCommand = &cobra.Command{
 	Use:   "start",
-	Short: "Start indexer",
-	Long:  "Start indexer",
+	Short: "Start EVM Sender",
+	Long:  "Start EVM Sender",
 	Run: func(cmd *cobra.Command, args []string) {
 		SendTx()
 	},

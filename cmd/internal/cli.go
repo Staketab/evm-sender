@@ -8,8 +8,8 @@ import (
 
 var RootCmd = &cobra.Command{
 	Use:   vars.Binary,
-	Short: "ETH Indexer",
-	Long:  "ETH Indexer",
+	Short: "EVM Sender script",
+	Long:  "EVM Sender script",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Default behavior when the root command is executed
 		vars.InfoLog.Println("Welcome to:", vars.Binary)
