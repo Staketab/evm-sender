@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/staketab/evm-sender/cmd/internal"
-	vars "github.com/staketab/evm-sender/cmd/internal/var"
+	"github.com/staketab/evm-sender/cmd/evm-sender/internal"
+	"github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
 	"os"
 )
 

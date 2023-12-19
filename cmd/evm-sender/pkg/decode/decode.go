@@ -3,7 +3,7 @@ package decode
 import (
 	"encoding/hex"
 	"errors"
-	vars "github.com/staketab/evm-sender/cmd/internal/var"
+	"github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
 	"math/big"
 	"regexp"
 	"strconv"

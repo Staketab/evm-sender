@@ -3,7 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
-	vars "github.com/staketab/evm-sender/cmd/internal/var"
+	"github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
 )
 
 func getVersion() {

@@ -3,8 +3,8 @@ package ff
 import (
 	"fmt"
 	"github.com/pelletier/go-toml"
-	"github.com/staketab/evm-sender/cmd/internal/controller"
-	vars "github.com/staketab/evm-sender/cmd/internal/var"
+	"github.com/staketab/evm-sender/cmd/evm-sender/internal/controller"
+	"github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
 	"os"
 	"os/user"
 	"path/filepath"

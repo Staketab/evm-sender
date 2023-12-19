@@ -2,8 +2,8 @@ package internal
 
 import (
 	"github.com/spf13/cobra"
-	vars "github.com/staketab/evm-sender/cmd/internal/var"
-	ff "github.com/staketab/evm-sender/cmd/pkg/func"
+	"github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
+	"github.com/staketab/evm-sender/cmd/evm-sender/pkg/func"
 )
 
 var RootCmd = &cobra.Command{
