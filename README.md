@@ -41,20 +41,38 @@ Example:
 rpc = "https://rpc:443"
 private_key = ""
 recipient = ""
-value = 1000000
+fixedValue = 0
 gas_limit = 22000
 memo = "From Staketab with LOVE!"
 txcount = 3
+inTime = "60"
 min = 1000000000000000000
 max = 2000000000000000000
+
+[SEND-BACK]
+enable = false
+private_key = ""
+recipient = ""
+fixedValue = 1000000000000000000
+gas_limit = 22000
+memo = "From Staketab with LOVE!"
+txCount = 1
+inTime = "60"
 ```
-Specify the in the config:
+Specify in the DEFAULT config:
 - ETH endpoint RPC `rpc = "https://rpc:443"`
-- Sender `private_key`
-- Recepient address `recipient`
-- Tx count sent in 1 minute `txcount = 3`
-- Min Max send range
-- 
+- Sender's private key `private_key`
+- Recipient's address `recipient`
+- Transaction count sent within a specific time(`inTime env`) `txcount = 3`
+- Min Max send range or use `fixedValue != 0` to send fixed value (if `fixedValue = 0` the `min` `max` range will be used)
+
+Specify in the SEND-BACK config:
+- Enable it with `enable = true` if needed
+- Sender's private key `private_key`
+- Recipient's address `recipient`
+- Transaction count sent within a specific time(`inTime env`) `txcount = 1`
+- Fixed value to send `fixedValue`
+
 ## 2. Start:
 ```
 evm-sender start
