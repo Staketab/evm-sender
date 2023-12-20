@@ -3,9 +3,9 @@ package internal
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/sirupsen/logrus"
 	"github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
 	"github.com/staketab/evm-sender/cmd/evm-sender/pkg/func"
 	"log"
@@ -23,7 +23,7 @@ func Rand(min *big.Int, max *big.Int) *big.Int {
 	return randNum
 }
 
-func SendRangeTx() {
+func SendRangeTx(logger *logrus.Logger) {
 	config, err := ff.ReadConfigs()
 	if err != nil {
 		vars.ErrorLog.Fatal(err)
@@ -47,6 +47,7 @@ func SendRangeTx() {
 		log.Fatal(err)
 	}
 	for {
+		logger.WithFields(logrus.Fields{"module": "send", "count": config.Default.TxCount}).Info("Starting to send a batch of transactions ")
 		for i := 0; i < config.Default.TxCount; i++ {
 			var value *big.Int
 			if config.Default.Value != 0 {
@@ -65,15 +66,14 @@ func SendRangeTx() {
 				log.Fatal(err)
 			}
 
-			fmt.Printf("Tx sent: %s\n", signedTx.Hash().Hex())
+			logger.WithFields(logrus.Fields{"module": "send", "value": config.Default.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent")
 			nonce++
 		}
-
 		time.Sleep(time.Duration(inTimeSeconds) * time.Second)
 	}
 }
 
-func SendBackTx() {
+func SendBackTx(logger *logrus.Logger) {
 	config, err := ff.ReadConfigs()
 	if err != nil {
 		vars.ErrorLog.Fatal(err)
@@ -95,6 +95,7 @@ func SendBackTx() {
 			log.Fatal(err)
 		}
 		for {
+			logger.WithFields(logrus.Fields{"module": "send-back", "count": config.Default.TxCount}).Info("Starting to send the transaction back")
 			for i := 0; i < config.SendBack.TxCount; i++ {
 				tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, []byte(data))
 				signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
@@ -107,7 +108,7 @@ func SendBackTx() {
 					log.Fatal(err)
 				}
 
-				fmt.Printf("Tx back: %s\n", signedTx.Hash().Hex())
+				logger.WithFields(logrus.Fields{"module": "send-back", "value": config.Default.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent back")
 				nonce++
 			}
 			time.Sleep(time.Duration(inTimeSeconds) * time.Second)

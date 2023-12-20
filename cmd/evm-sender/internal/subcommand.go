@@ -2,6 +2,7 @@ package internal
 
 import (
 	"github.com/spf13/cobra"
+	vars "github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
 	"sync"
 )
 
@@ -25,15 +26,17 @@ var startCommand = &cobra.Command{
 	Short: "Start EVM Sender",
 	Long:  "Start EVM Sender",
 	Run: func(cmd *cobra.Command, args []string) {
+		vars.InitLogger()
+		logger := vars.GetLogger()
 		var wg sync.WaitGroup
 		wg.Add(2)
 		go func() {
 			defer wg.Done()
-			SendRangeTx()
+			SendRangeTx(logger)
 		}()
 		go func() {
 			defer wg.Done()
-			SendBackTx()
+			SendBackTx(logger)
 		}()
 		wg.Wait()
 	},
