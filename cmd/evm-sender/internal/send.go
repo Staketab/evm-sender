@@ -108,7 +108,7 @@ func SendBackTx(logger *logrus.Logger) {
 					log.Fatal(err)
 				}
 
-				logger.WithFields(logrus.Fields{"module": "send-back", "value": config.Default.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent back")
+				logger.WithFields(logrus.Fields{"module": "send-back", "value": config.SendBack.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent back")
 				nonce++
 			}
 			time.Sleep(time.Duration(inTimeSeconds) * time.Second)
