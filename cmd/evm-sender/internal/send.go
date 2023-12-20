@@ -47,7 +47,7 @@ func SendRangeTx(logger *logrus.Logger) {
 		log.Fatal(err)
 	}
 	for {
-		logger.WithFields(logrus.Fields{"module": "send", "count": config.Default.TxCount}).Info("Starting to send a batch of transactions ")
+		logger.WithFields(logrus.Fields{"module": "send", "count": config.Default.TxCount, "timer": inTimeSeconds}).Info("Starting to send a batch of transactions ")
 		for i := 0; i < config.Default.TxCount; i++ {
 			var value *big.Int
 			if config.Default.Value != 0 {
@@ -95,7 +95,7 @@ func SendBackTx(logger *logrus.Logger) {
 			log.Fatal(err)
 		}
 		for {
-			logger.WithFields(logrus.Fields{"module": "send-back", "count": config.SendBack.TxCount}).Info("Starting to send the transaction back")
+			logger.WithFields(logrus.Fields{"module": "send-back", "count": config.SendBack.TxCount, "timer": inTimeSeconds}).Info("Starting to send the transaction back")
 			for i := 0; i < config.SendBack.TxCount; i++ {
 				tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, []byte(data))
 				signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
