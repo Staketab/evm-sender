@@ -95,7 +95,7 @@ func SendBackTx(logger *logrus.Logger) {
 			log.Fatal(err)
 		}
 		for {
-			logger.WithFields(logrus.Fields{"module": "send-back", "count": config.Default.TxCount}).Info("Starting to send the transaction back")
+			logger.WithFields(logrus.Fields{"module": "send-back", "count": config.SendBack.TxCount}).Info("Starting to send the transaction back")
 			for i := 0; i < config.SendBack.TxCount; i++ {
 				tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, []byte(data))
 				signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
