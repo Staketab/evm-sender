@@ -78,7 +78,6 @@ func SendBackTx(logger *logrus.Logger) {
 	if err != nil {
 		vars.ErrorLog.Fatal(err)
 	}
-	time.Sleep(10 * time.Second)
 	if config.SendBack.Enable {
 		value := big.NewInt(config.SendBack.Value) // in wei
 		gasLimit := config.SendBack.GasLimit       // in units

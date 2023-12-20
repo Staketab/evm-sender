@@ -34,8 +34,10 @@ var startCommand = &cobra.Command{
 			defer wg.Done()
 			SendRangeTx(logger)
 		}()
+		sendBackTicker := vars.SendBackTicker
 		go func() {
 			defer wg.Done()
+			<-sendBackTicker.C
 			SendBackTx(logger)
 		}()
 		wg.Wait()
