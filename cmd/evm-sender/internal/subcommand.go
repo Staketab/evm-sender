@@ -29,15 +29,18 @@ var startCommand = &cobra.Command{
 		vars.InitLogger()
 		logger := vars.GetLogger()
 		var wg sync.WaitGroup
+		done := make(chan bool)
 		wg.Add(2)
 		go func() {
 			defer wg.Done()
 			SendRangeTx(logger)
+			done <- true
 		}()
-		sendBackTicker := vars.SendBackTicker
+		//sendBackTicker := vars.SendBackTicker
 		go func() {
 			defer wg.Done()
-			<-sendBackTicker.C
+			<-done
+			//<-sendBackTicker.C
 			SendBackTx(logger)
 		}()
 		wg.Wait()
