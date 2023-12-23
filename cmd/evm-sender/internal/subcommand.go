@@ -32,7 +32,7 @@ var startCommand = &cobra.Command{
 		wg.Add(2)
 		go func() {
 			defer wg.Done()
-			SendRangeTx(logger)
+			CheckSendTx(logger)
 		}()
 		go func() {
 			defer wg.Done()

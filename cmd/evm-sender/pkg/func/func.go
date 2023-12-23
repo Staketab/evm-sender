@@ -5,6 +5,8 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/pelletier/go-toml"
@@ -50,6 +52,9 @@ txCount = 3
 inTime = "60"
 min = 1000000000000000000
 max = 9000000000000000000
+
+[ERC20]
+tokenContract = "0xbd770416a3345f91e4b34576cb804a576fa48eb1"
 
 [SEND-BACK]
 enable = false
@@ -161,4 +166,42 @@ func InitializeEthereumClientSendBack(config controller.Config) (*ethclient.Clie
 	}
 
 	return client, privateKey, nonce, gasPrice, chainID, nil
+}
+
+func UnpackString(data []byte) (string, error) {
+	if len(data) < 96 {
+		return "", fmt.Errorf("data too short to contain a string")
+	}
+	offset := new(big.Int).SetBytes(data[0:32]).Uint64()
+	if offset+32 > uint64(len(data)) {
+		return "", fmt.Errorf("incorrect offset or string length")
+	}
+	strLen := new(big.Int).SetBytes(data[offset : offset+32]).Uint64()
+	if offset+32+strLen > uint64(len(data)) {
+		return "", fmt.Errorf("incorrect string length")
+	}
+	strData := data[offset+32 : offset+32+strLen]
+
+	return string(strData), nil
+}
+
+func GetTokenSymbol(RPCURL string, tokenAddress common.Address) (string, error) {
+	client, err := ethclient.Dial(RPCURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to connect to the Ethereum node: %v", err)
+	}
+	data := common.Hex2Bytes("06fdde03")
+	msg := ethereum.CallMsg{
+		To:   &tokenAddress,
+		Data: data,
+	}
+	result, err := client.CallContract(context.Background(), msg, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to call the contract: %v", err)
+	}
+	symbol, err := UnpackString(result)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode the token symbol: %v", err)
+	}
+	return symbol, nil
 }

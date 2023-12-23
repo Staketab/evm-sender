@@ -2,6 +2,7 @@ package controller
 
 type Config struct {
 	Default  DefaultConfig  `toml:"DEFAULT"`
+	Erc20    Erc20Config    `toml:"ERC20"`
 	SendBack SendBackConfig `toml:"SEND-BACK"`
 }
 
@@ -16,6 +17,10 @@ type DefaultConfig struct {
 	InTime     string `toml:"inTime"`
 	Min        int64  `toml:"min"`
 	Max        int64  `toml:"max"`
+}
+
+type Erc20Config struct {
+	TokenContract string `toml:"tokenContract"`
 }
 
 type SendBackConfig struct {

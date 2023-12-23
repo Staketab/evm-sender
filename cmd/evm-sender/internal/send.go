@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/staketab/evm-sender/cmd/evm-sender/internal/var"
 	"github.com/staketab/evm-sender/cmd/evm-sender/pkg/func"
+	"golang.org/x/crypto/sha3"
 	"log"
 	"math/big"
 	"math/rand"
@@ -23,13 +24,84 @@ func Rand(min *big.Int, max *big.Int) *big.Int {
 	return randNum
 }
 
+func CheckSendTx(logger *logrus.Logger) {
+	config, err := ff.ReadConfigs()
+	if err != nil {
+		vars.ErrorLog.Fatal(err)
+	}
+	if config.Erc20.TokenContract != "" {
+		SendErc20Tx(logger)
+	} else {
+		SendRangeTx(logger)
+	}
+}
+
+func SendErc20Tx(logger *logrus.Logger) {
+	config, err := ff.ReadConfigs()
+	if err != nil {
+		vars.ErrorLog.Fatal(err)
+	}
+	gasLimit := config.Default.GasLimit // in units
+	toAddress := common.HexToAddress(config.Default.Recipient)
+	tokenAddress := common.HexToAddress(config.Erc20.TokenContract) // assume we've added this to your config
+
+	min := big.NewInt(config.Default.Min)
+	max := big.NewInt(config.Default.Max)
+
+	client, privateKey, nonce, gasPrice, chainID, err := ff.InitializeEthereumClientDefault(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	inTimeSeconds, err := strconv.Atoi(config.Default.InTime)
+	if err != nil {
+		log.Fatal(err)
+	}
+	symbol, _ := ff.GetTokenSymbol(config.Default.Rpc, tokenAddress)
+	for {
+		logger.WithFields(logrus.Fields{"module": "send", "token": symbol, "count": config.Default.TxCount, "timer": inTimeSeconds}).Info("Starting to send a batch of transactions ")
+		for i := 0; i < config.Default.TxCount; i++ {
+			var value *big.Int
+			if config.Default.Value != 0 {
+				value = big.NewInt(config.Default.Value)
+			} else {
+				value = Rand(min, max)
+			}
+
+			transferFnSignature := []byte("transfer(address,uint256)")
+			hash := sha3.NewLegacyKeccak256()
+			hash.Write(transferFnSignature)
+			methodID := hash.Sum(nil)[:4]
+			paddedAddress := common.LeftPadBytes(toAddress.Bytes(), 32)
+			paddedAmount := common.LeftPadBytes(value.Bytes(), 32)
+
+			var data []byte
+			data = append(data, methodID...)
+			data = append(data, paddedAddress...)
+			data = append(data, paddedAmount...)
+
+			tx := types.NewTransaction(nonce, tokenAddress, big.NewInt(0), gasLimit, gasPrice, data)
+			signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			err = client.SendTransaction(context.Background(), signedTx)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			logger.WithFields(logrus.Fields{"module": "send", "token": symbol, "value": config.Default.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent")
+			nonce++
+		}
+		time.Sleep(time.Duration(inTimeSeconds) * time.Second)
+	}
+}
+
 func SendRangeTx(logger *logrus.Logger) {
 	config, err := ff.ReadConfigs()
 	if err != nil {
 		vars.ErrorLog.Fatal(err)
 	}
-
-	//value := big.NewInt(config.Default.Value) // in wei
 	gasLimit := config.Default.GasLimit // in units
 	toAddress := common.HexToAddress(config.Default.Recipient)
 	memo := config.Default.Memo
