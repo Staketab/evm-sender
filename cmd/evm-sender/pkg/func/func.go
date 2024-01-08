@@ -54,7 +54,7 @@ min = "1000000000000000000"
 max = "9000000000000000000"
 
 [ERC20]
-tokenContract = "0xbd770416a3345f91e4b34576cb804a576fa48eb1"
+tokenContract = ""
 
 [SEND-BACK]
 enable = false
