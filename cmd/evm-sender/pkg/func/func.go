@@ -45,13 +45,13 @@ func CreateConfigFile(path string) error {
 rpc = ""
 private_key = ""
 recipient = ""
-fixedValue = 0
+fixedValue = "0"
 gas_limit = 22000
 memo = "From Staketab with LOVE!"
 txCount = 3
 inTime = "60"
-min = 1000000000000000000
-max = 9000000000000000000
+min = "1000000000000000000"
+max = "9000000000000000000"
 
 [ERC20]
 tokenContract = "0xbd770416a3345f91e4b34576cb804a576fa48eb1"
@@ -60,7 +60,7 @@ tokenContract = "0xbd770416a3345f91e4b34576cb804a576fa48eb1"
 enable = false
 private_key = ""
 recipient = ""
-fixedValue = 1000000000000000000
+fixedValue = "1000000000000000000"
 gas_limit = 22000
 memo = "From Staketab with LOVE!"
 txCount = 1

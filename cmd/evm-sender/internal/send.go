@@ -45,8 +45,8 @@ func SendErc20Tx(logger *logrus.Logger) {
 	toAddress := common.HexToAddress(config.Default.Recipient)
 	tokenAddress := common.HexToAddress(config.Erc20.TokenContract) // assume we've added this to your config
 
-	min := big.NewInt(config.Default.Min)
-	max := big.NewInt(config.Default.Max)
+	min := config.Default.Min
+	max := config.Default.Max
 
 	client, privateKey, nonce, gasPrice, chainID, err := ff.InitializeEthereumClientDefault(config)
 	if err != nil {
@@ -61,8 +61,8 @@ func SendErc20Tx(logger *logrus.Logger) {
 		logger.WithFields(logrus.Fields{"module": "send", "token": symbol, "count": config.Default.TxCount, "timer": inTimeSeconds}).Info("Starting to send a batch of transactions ")
 		for i := 0; i < config.Default.TxCount; i++ {
 			var value *big.Int
-			if config.Default.Value != 0 {
-				value = big.NewInt(config.Default.Value)
+			if config.Default.Value.Cmp(big.NewInt(0)) != 0 {
+				value = config.Default.Value
 			} else {
 				value = Rand(min, max)
 			}
@@ -107,8 +107,8 @@ func SendRangeTx(logger *logrus.Logger) {
 	memo := config.Default.Memo
 	data := hex.EncodeToString([]byte(memo))
 
-	min := big.NewInt(config.Default.Min)
-	max := big.NewInt(config.Default.Max)
+	min := config.Default.Min
+	max := config.Default.Max
 
 	client, privateKey, nonce, gasPrice, chainID, err := ff.InitializeEthereumClientDefault(config)
 	if err != nil {
@@ -122,8 +122,8 @@ func SendRangeTx(logger *logrus.Logger) {
 		logger.WithFields(logrus.Fields{"module": "send", "count": config.Default.TxCount, "timer": inTimeSeconds}).Info("Starting to send a batch of transactions ")
 		for i := 0; i < config.Default.TxCount; i++ {
 			var value *big.Int
-			if config.Default.Value != 0 {
-				value = big.NewInt(config.Default.Value)
+			if config.Default.Value.Cmp(big.NewInt(0)) != 0 {
+				value = config.Default.Value
 			} else {
 				value = Rand(min, max)
 			}
@@ -151,8 +151,8 @@ func SendBackTx(logger *logrus.Logger) {
 		vars.ErrorLog.Fatal(err)
 	}
 	if config.SendBack.Enable {
-		value := big.NewInt(config.SendBack.Value) // in wei
-		gasLimit := config.SendBack.GasLimit       // in units
+		value := config.SendBack.Value       // in wei
+		gasLimit := config.SendBack.GasLimit // in units
 		toAddress := common.HexToAddress(config.SendBack.Recipient)
 		memo := config.SendBack.Memo
 		data := hex.EncodeToString([]byte(memo))
