@@ -58,6 +58,7 @@ func SendErc20Tx(logger *logrus.Logger) {
 	}
 	symbol, _ := ff.GetTokenSymbol(config.Default.Rpc, tokenAddress)
 	for {
+		start := time.Now()
 		logger.WithFields(logrus.Fields{"module": "send", "token": symbol, "count": config.Default.TxCount, "timer": inTimeSeconds}).Info("Starting to send a batch of transactions ")
 		for i := 0; i < config.Default.TxCount; i++ {
 			var value *big.Int
@@ -93,7 +94,11 @@ func SendErc20Tx(logger *logrus.Logger) {
 			logger.WithFields(logrus.Fields{"module": "send", "token": symbol, "value": config.Default.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent")
 			nonce++
 		}
-		time.Sleep(time.Duration(inTimeSeconds) * time.Second)
+		elapsed := time.Since(start)
+		sleepDuration := time.Duration(inTimeSeconds)*time.Second - elapsed
+		if sleepDuration > 0 {
+			time.Sleep(sleepDuration)
+		}
 	}
 }
 
@@ -119,6 +124,7 @@ func SendRangeTx(logger *logrus.Logger) {
 		log.Fatal(err)
 	}
 	for {
+		start := time.Now()
 		logger.WithFields(logrus.Fields{"module": "send", "count": config.Default.TxCount, "timer": inTimeSeconds}).Info("Starting to send a batch of transactions ")
 		for i := 0; i < config.Default.TxCount; i++ {
 			var value *big.Int
@@ -141,7 +147,11 @@ func SendRangeTx(logger *logrus.Logger) {
 			logger.WithFields(logrus.Fields{"module": "send", "value": config.Default.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent")
 			nonce++
 		}
-		time.Sleep(time.Duration(inTimeSeconds) * time.Second)
+		elapsed := time.Since(start)
+		sleepDuration := time.Duration(inTimeSeconds)*time.Second - elapsed
+		if sleepDuration > 0 {
+			time.Sleep(sleepDuration)
+		}
 	}
 }
 
@@ -166,6 +176,7 @@ func SendBackTx(logger *logrus.Logger) {
 			log.Fatal(err)
 		}
 		for {
+			start := time.Now()
 			logger.WithFields(logrus.Fields{"module": "send-back", "count": config.SendBack.TxCount, "timer": inTimeSeconds}).Info("Starting to send the transaction back")
 			for i := 0; i < config.SendBack.TxCount; i++ {
 				tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, []byte(data))
@@ -182,7 +193,11 @@ func SendBackTx(logger *logrus.Logger) {
 				logger.WithFields(logrus.Fields{"module": "send-back", "value": config.SendBack.Value, "hash": signedTx.Hash().Hex()}).Info("Tx sent back")
 				nonce++
 			}
-			time.Sleep(time.Duration(inTimeSeconds) * time.Second)
+			elapsed := time.Since(start)
+			sleepDuration := time.Duration(inTimeSeconds)*time.Second - elapsed
+			if sleepDuration > 0 {
+				time.Sleep(sleepDuration)
+			}
 		}
 	}
 }
