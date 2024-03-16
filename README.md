@@ -38,22 +38,25 @@ evm-sender init
 Example:
 ```
 [DEFAULT]
-rpc = "https://rpc:443"
+rpc = ""
 private_key = ""
 recipient = ""
-fixedValue = 0
+fixedValue = "0"
 gas_limit = 22000
 memo = "From Staketab with LOVE!"
 txcount = 3
 inTime = "60"
-min = 1000000000000000000
-max = 2000000000000000000
+min = "1000000000000000000"
+max = "2000000000000000000"
+
+[ERC20]
+tokenContract = ""
 
 [SEND-BACK]
 enable = false
 private_key = ""
 recipient = ""
-fixedValue = 1000000000000000000
+fixedValue = "1000000000000000000"
 gas_limit = 22000
 memo = "From Staketab with LOVE!"
 txCount = 1
